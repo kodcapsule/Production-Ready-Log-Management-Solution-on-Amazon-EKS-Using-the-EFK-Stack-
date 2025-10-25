@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog-app
+  namespace: demo-apps
+  labels:
+    app: blog-app
+spec:
+  selector:
+    app: blog-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP

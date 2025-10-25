@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-app
+  namespace: demo-apps
+  labels:
+    app: blog-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: blog-app
+  template:
+    metadata:
+      labels:
+        app: blog-app
+    spec:
+      containers:
+      - name: blog-app
+        image: kodecapsule/django-blog-app:blue-server
+        ports:
+        - name: blog-app-port
+          containerPort: 80
+          protocol: TCP

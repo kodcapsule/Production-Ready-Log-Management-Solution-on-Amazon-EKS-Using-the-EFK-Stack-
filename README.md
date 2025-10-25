@@ -15,8 +15,10 @@ This is a production-ready project that demostrate how you can build Centralized
       - [Step 3: create nodegroup](#create-nodegroup)
       - [Step 4: update-kubeconfig](#update-kubeconfig)
       - [Step 5: Verify cluster connection](#Verify-cluster-connection)
-5. [Deploy Sample Applications](#step-2-deploy-sample-applications)
-     - [Step 1: Set Up a Kubernetes Cluster](#step-1-set-up-a-kubernetes-cluster) 
+5. [Deploy Sample Applications](#-deploy-sample-applications)
+     - [Deploy Nginx app](#Deploy-Nginx-app) 
+     - [Deploy Redis app](#Deploy-Redis-app) 
+     - [Deploy Django blog app](#Deploy-Django-blog-app) 
 6. [Set Up the EFK Stack](#step-3-set-up-the-efk-stack) 
 7. [Verification](#verification)  
 8. [Cleanup (Optional)](#cleanup-optional)  
@@ -62,7 +64,7 @@ Before you begin, make sure you have the  following prerequisites met:
 ## Set Up a Kubernetes Cluster
 This section describes how to create and configure a Kubernetes cluster on Amazon EKS using **eksctl**.
 
-### **Step 1: Create an EKS Cluster Using eksctl**
+### **⚙️ Step 1: Create an EKS Cluster Using eksctl**
 
 Create a new EKS cluster  using the following command:
 
@@ -77,7 +79,7 @@ eksctl create cluster \
 > ⏱️ *Wait patiently as this process may take several minutes, between 15 to 20 minutes.*
 
 ---
-### **Step 2: Install IAM OIDC Provider**
+### **🧰 Step 2: Install IAM OIDC Provider**
 
 Associate an IAM OpenID Connect (OIDC) provider with your EKS cluster to enable service account authentication:
 
@@ -155,6 +157,128 @@ ip-192-168-49-219.us-east-1.compute.internal   Ready    <none>   2m    v1.29
 
 
 ## Deploy Sample Applications
+In this section, we will deploy a set of sample applications to the Kubernetes cluster.
+These applications will generate logs that will be collected, processed, and visualized by the EFK stack. The applications are in the apps directory
+
+The following three applications will be deployed:
+
+- Nginx: A lightweight web server used to simulate HTTP traffic and access logs.
+
+- Redis: An in-memory data store that produces operational and event logs.
+
+- A Django blog application : A simple web-based application that generates application-level logs. 
+
+### Deploy Nginx 
+
+---
+
+ **Step 1: Navigate to the nginx directory**
+
+Change  directory to the nginx  folder using this command:
+
+```bash
+cd /apps/Nginx/
+```
+
+> 💡 *Ensure that the Nginx deployment and service manifest files are available in this directory before proceeding.*
+
+---
+
+ **Step 2: Deploy the Nginx App**
+
+Use the `kubectl` command to deploy both the **Deployment** and **Service** resources:
+
+```bash
+kubectl apply -f nginx-deployment.yaml -n demo-apps
+kubectl apply -f nginx-svc.yaml
+```
+
+> ✅ *This command creates the Nginx deployment and exposes it as a service within the cluster.*
+
+---
+
+ **Verification**
+
+Check that the Nginx pods and service are running successfully:
+
+```bash
+kubectl get pods -l app=nginx -n demo-apps
+kubectl get svc nginx-service  -n demo-apps
+```
+
+> 🔍 *If all resources show the “Running” and “Active” states, the Nginx deployment is complete.*
+
+ 
+### Deploy Redis app 
+
+ **Step 1: Navigate to the Redis Directory**
+Change your working directory to the Redis application folder:
+
+```bash
+cd /apps/Redis/
+```
+
+> 💡 *Ensure that the Redis deployment and service YAML files are available in this directory before proceeding.*
+
+ **Step 2: Deploy Redis to the Cluster**
+Run the following commands to apply the Redis manifests:
+
+```bash
+kubectl apply -f redis-deployment.yaml -n demo-apps
+kubectl apply -f redis-svc.yaml  -n demo-apps
+```
+
+> ✅ *This command deploys the Redis application and exposes it within the Kubernetes cluster.*
+
+ **Step 3: Verify Redis Deployment**
+Check the status of the Redis resources:
+
+```bash
+kubectl get pods -l app=redis -n demo-apps
+kubectl get svc redis-service  -n demo-apps
+```
+
+> 🔍 *Confirm that the Redis pod is in the “Running” state and the service is active.*
+
+---
+
+
+### Deploy Django blog app
+
+
+ **Step 1: Navigate to the Blog Directory**
+Change your working directory to the Blog application folder:
+
+```bash
+cd /apps/Blog/
+```
+
+> 💡 *Make sure the Blog app deployment and service YAML files exist in this path.*
+
+ **Step 2: Deploy the Blog Application**
+Use `kubectl` to create the deployment and service for the Blog app:
+
+```bash
+kubectl apply -f blog-deployment.yaml -n demo-apps
+kubectl apply -f blog-svc.yaml   -n demo-apps
+```
+
+> ✅ *This will deploy the Blog application and expose it as a service inside the cluster.*
+
+ **Step 3: Verify Blog Application Deployment**
+Confirm the Blog app is running properly:
+
+```bash
+kubectl get pods -l app=blog -n demo-apps
+kubectl get svc blog-service  -n demo-apps
+```
+
+> 🔍 *Ensure that all Blog pods are in the “Running” state and the service is reachable.*
+
+---
+
+
+
 ## Set Up the EFK Stack
 ## Verification
 ## Cleanup (Optional)
