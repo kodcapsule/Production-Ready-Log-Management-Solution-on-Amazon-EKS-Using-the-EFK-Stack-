@@ -77,7 +77,7 @@ eksctl create cluster \
 ```
 
 > ⏱️ *Wait patiently as this process may take several minutes, between 15 to 20 minutes.*
-
+![EFK CLUSTER](./images/efk-cluster.png)
 ---
 ### **🧰 Step 2: Install IAM OIDC Provider**
 
@@ -90,6 +90,13 @@ eksctl utils associate-iam-oidc-provider \
    --approve
 ```
 
+expected output
+
+```
+2025-10-25 13:25:06 [ℹ]  will create IAM Open ID Connect provider for cluster "efk-cluster" in "us-east-1"
+2025-10-25 13:25:07 [✔]  created IAM Open ID Connect provider for cluster "efk-cluster" in "us-east-1"
+```
+
 Verify OIDC configuration:
 
 ```bash
@@ -97,6 +104,13 @@ aws eks describe-cluster \
 --name efk-cluster \
 --query "cluster.identity.oidc.issuer" \
 --output text
+```
+
+expected output:
+
+```
+https://oidc.eks.us-east-1.amazonaws.com/id/A3048BC2344DF3FCE082A738E4239522
+
 ```
 
 ### **Step 3: Create Node Group**
@@ -125,11 +139,21 @@ aws eks update-kubeconfig \
 --region us-east-1 \
 --name efk-cluster
 ```
+expected output
+```
+Added new context arn:aws:eks:us-east-1:650251710981:cluster/efk-cluster to C:\Users\simon\.kube\config
+
+```
 
 Confirm your current context:
 
 ```bash
 kubectl config current-context
+```
+expected output
+```
+arn:aws:eks:us-east-1:650251710981:cluster/efk-cluster
+
 ```
 
 > 🧠 *This ensures `kubectl` commands are executed against the correct EKS cluster.*
@@ -146,15 +170,24 @@ kubectl get nodes
 Expected output example:
 
 ```
-NAME                                           STATUS   ROLES    AGE   VERSION
-ip-192-168-34-101.us-east-1.compute.internal   Ready    <none>   2m    v1.29
-ip-192-168-49-219.us-east-1.compute.internal   Ready    <none>   2m    v1.29
+NAME                             STATUS                        ROLES    AGE     VERSION
+ip-192-168-18-200.ec2.internal   NotReady,SchedulingDisabled   <none>   21m     v1.32.9-eks-113cf36
+ip-192-168-19-74.ec2.internal    Ready                         <none>   3m35s   v1.32.9-eks-113cf36
+ip-192-168-22-93.ec2.internal    Ready                         <none>   11m     v1.32.9-eks-113cf36
+ip-192-168-26-13.ec2.internal    Ready                         <none>   11m     v1.32.9-eks-113cf36
+ip-192-168-38-244.ec2.internal   Ready                         <none>   5m41s   v1.32.9-eks-113cf36
+ip-192-168-44-90.ec2.internal    Ready                         <none>   11m     v1.32.9-eks-113cf36
+
 ```
 
 > ✅ *Your Kubernetes cluster is now up and running on Amazon EKS.*
 
 ---
+### **Step 5: Clean up**
 
+```bash
+eksctl delete cluster --name observability
+```
 
 ## Deploy Sample Applications
 In this section, we will deploy a set of sample applications to the Kubernetes cluster.
@@ -173,29 +206,19 @@ The following three applications will be deployed:
 ---
 
  **Step 1: Navigate to the nginx directory**
-
 Change  directory to the nginx  folder using this command:
-
 ```bash
 cd /apps/Nginx/
 ```
-
 > 💡 *Ensure that the Nginx deployment and service manifest files are available in this directory before proceeding.*
 
----
-
  **Step 2: Deploy the Nginx App**
-
 Use the `kubectl` command to deploy both the **Deployment** and **Service** resources:
-
 ```bash
 kubectl apply -f nginx-deployment.yaml -n demo-apps
 kubectl apply -f nginx-svc.yaml
 ```
-
 > ✅ *This command creates the Nginx deployment and exposes it as a service within the cluster.*
-
----
 
  **Verification**
 
@@ -205,19 +228,15 @@ Check that the Nginx pods and service are running successfully:
 kubectl get pods -l app=nginx -n demo-apps
 kubectl get svc nginx-service  -n demo-apps
 ```
-
 > 🔍 *If all resources show the “Running” and “Active” states, the Nginx deployment is complete.*
 
- 
 ### Deploy Redis app 
-
+---
  **Step 1: Navigate to the Redis Directory**
 Change your working directory to the Redis application folder:
-
 ```bash
 cd /apps/Redis/
 ```
-
 > 💡 *Ensure that the Redis deployment and service YAML files are available in this directory before proceeding.*
 
  **Step 2: Deploy Redis to the Cluster**
@@ -227,7 +246,6 @@ Run the following commands to apply the Redis manifests:
 kubectl apply -f redis-deployment.yaml -n demo-apps
 kubectl apply -f redis-svc.yaml  -n demo-apps
 ```
-
 > ✅ *This command deploys the Redis application and exposes it within the Kubernetes cluster.*
 
  **Step 3: Verify Redis Deployment**
@@ -237,7 +255,6 @@ Check the status of the Redis resources:
 kubectl get pods -l app=redis -n demo-apps
 kubectl get svc redis-service  -n demo-apps
 ```
-
 > 🔍 *Confirm that the Redis pod is in the “Running” state and the service is active.*
 
 ---
