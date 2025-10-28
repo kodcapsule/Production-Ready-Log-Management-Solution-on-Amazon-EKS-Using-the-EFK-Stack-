@@ -33,11 +33,13 @@ In this project we will dive deep into how to deploy production-ready log manage
 
 
 ## Project Architecture
+![Project Architecture](./images/CLo.gif)
 The architecture consists of:  
 - **Amazon EKS Cluster** hosting containerized applications.  
 - **Fluent Bit** as a lightweight log collector and forwarder.  
 - **Elasticsearch** for log indexing and storage.  
 - **Kibana** for log visualization and querying.  
+- **Sample applications** Three sample applications, Nginx, Redis and Django blog app deployed into the cluster
 ## Prerequisites
 
 Before you begin, make sure you have the  following prerequisites met:
@@ -345,7 +347,7 @@ For more details on EBS CSI driver read [Use Kubernetes volume storage with Amaz
 ### Deploy Elasticserach in K8S cluster
 
 ### Deploy Kibana in K8S cluster
-### Deploy  Fluentbit in K8S cluster
+### Deploy  Fluentbit in the K8S cluster
 1. Add  the Fluent Helm charts repository
 
 ```bash
@@ -355,12 +357,11 @@ helm repo add fluent https://fluent.github.io/helm-charts
 ```bash
 helm search repo fluent
 ```
-    Add and update Helm repo:
-    Install Elasticsearch:
-    Verify
-  Deploy Elasticsearch
-   Deploy Kiban
-
+3. Install the  default chart 
+```bash
+helm upgrade --install fluent-bit fluent/fluent-bit
+```
+For more details ablout installing Fluent bit in K8S cluster refere to [Download and install Fluent Bit](https://docs.fluentbit.io/manual/installation/downloads/kubernetes#fluent-bit.conf)
 ## Verification
 ## Cleanup (Optional)
 ## Conclusion

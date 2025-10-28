@@ -15,7 +15,7 @@ set -o pipefail  # Catch errors in pipes
 # Configuration
 # ----------------------------------------------------------------------------
 readonly NAMESPACE="demo-apps"
-# readonly APPS_DIR=
+
 
 # ----------------------------------------------------------------------------
 # Helper Functions
