@@ -297,6 +297,70 @@ kubectl get svc blog-service  -n demo-apps
 
 
 ## Set Up the EFK Stack
+
+### 🧩 Initial Setup
+
+Elasticsearch is a **stateful application**. To ensure data persistence, you must create an **Amazon EBS (Elastic Block Store) volume** where Elasticsearch can store all logs permanently.
+
+In order for the **EKS cluster** to interact with the EBS volume, some initial configuration is required. Follow the steps below to complete the setup.
+
+---
+
+1. **Create an IAM Role for the Service Account**  
+   This role will grant the necessary permissions for the EBS CSI driver to manage EBS volumes on behalf of Kubernetes.
+
+   ```bash
+   eksctl create iamserviceaccount \
+   --name ebs-csi-controller-sa \
+   --namespace kube-system \
+   --cluster observability \
+   --role-name AmazonEKS_EBS_CSI_DriverRole \
+   --role-only \
+   --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
+   --approve
+   ```
+   
+2. **Retrieve the IAM Role ARN**  
+   You will need the ARN of the IAM role created in the previous step to associate it with your EKS service account.
+   ```bash
+   ARN=$(aws iam get-role --role-name AmazonEKS_EBS_CSI_DriverRole --query 'Role.Arn' --output text)
+   ```
+
+3. **Deploy the EBS CSI Driver**  
+   The EBS Container Storage Interface (CSI) driver enables dynamic provisioning and management of EBS volumes for your Kubernetes workloads.
+
+```bash
+eksctl create addon --cluster observability \
+--name aws-ebs-csi-driver --version latest \
+--service-account-role-arn $ARN --force
+```
+For more details on EBS CSI driver read [Use Kubernetes volume storage with Amazon EBS](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html)
+
+4. **Create a Namespace for Logging**  
+   Create a  namespace named `logging` where all EFK components will be deployed.  
+   ```bash
+   kubectl create namespace logging
+   ```
+
+### Deploy Elasticserach in K8S cluster
+
+### Deploy Kibana in K8S cluster
+### Deploy  Fluentbit in K8S cluster
+1. Add  the Fluent Helm charts repository
+
+```bash
+helm repo add fluent https://fluent.github.io/helm-charts 
+```
+2. validate that the repo was added
+```bash
+helm search repo fluent
+```
+    Add and update Helm repo:
+    Install Elasticsearch:
+    Verify
+  Deploy Elasticsearch
+   Deploy Kiban
+
 ## Verification
 ## Cleanup (Optional)
 ## Conclusion
