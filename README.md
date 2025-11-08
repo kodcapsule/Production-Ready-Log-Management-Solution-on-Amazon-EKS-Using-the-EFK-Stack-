@@ -72,13 +72,14 @@ Create a new EKS cluster  using the following command:
 
 ```bash
 eksctl create cluster \
-  --name efk-cluster \  
+  --name efk-cluster \
   --region us-east-1 \
   --zones=us-east-1a,us-east-1b \
   --without-nodegroup
 ```
 
 > ⏱️ *Wait patiently as this process may take several minutes, between 15 to 20 minutes.*
+
 ![EFK CLUSTER](./images/efk-cluster.png)
 ---
 ### **🧰 Step 2: Install IAM OIDC Provider in th cluster**
@@ -87,12 +88,12 @@ Associate an IAM OpenID Connect (OIDC) provider with your EKS cluster to enable 
 
 ```bash
 eksctl utils associate-iam-oidc-provider \
-  --region us-east-1  \
+  --region us-east-1 \
   --cluster efk-cluster \
-   --approve
+  --approve
 ```
 
-expected output
+Expected output:
 
 ```bash
 2025-10-25 13:25:06 [ℹ]  will create IAM Open ID Connect provider for cluster "efk-cluster" in "us-east-1"
@@ -107,8 +108,7 @@ aws eks describe-cluster \
 --query "cluster.identity.oidc.issuer" \
 --output text
 ```
-
-expected output:
+Expected output:
 
 ```bash
 https://oidc.eks.us-east-1.amazonaws.com/id/A3048BC2344DF3FCE082A738E4239522
@@ -120,31 +120,31 @@ https://oidc.eks.us-east-1.amazonaws.com/id/A3048BC2344DF3FCE082A738E4239522
 Add node a nodegroup to your cluster 
 
 ```bash
-eksctl create nodegroup   \
---cluster efk-cluster   \
---region us-east-1   \
---name standard-workers   \
---node-type t3.medium   \
---nodes 3   \
---nodes-min 1   \
---nodes-max 4   \
---managed
+eksctl create nodegroup \
+  --cluster efk-cluster \
+  --region us-east-1 \
+  --name workers-1 \
+  --node-type t3.medium \
+  --nodes 3 \
+  --nodes-min 1 \
+  --nodes-max 4 \
+  --managed
 ```
 
 
 ### **Step 4: Update Kubeconfig**
 
-Update your local kubeconfig file to connect `kubectl` to your EKS cluster:
+Update your local kubeconfig file to connect `kubectl` to your EKS cluster,efk-cluster:
 
 ```bash
 aws eks update-kubeconfig \
 --region us-east-1 \
 --name efk-cluster
 ```
-expected output
-```
-Added new context arn:aws:eks:us-east-1:650251710981:cluster/efk-cluster to C:\Users\simon\.kube\config
+Expected output:
 
+```bash
+Updated context arn:aws:eks:us-east-1:650251710981:cluster/efk-cluster in C:\Users\simon\.kube\config
 ```
 
 Confirm your current context:
@@ -152,7 +152,7 @@ Confirm your current context:
 ```bash
 kubectl config current-context
 ```
-expected output
+Expected output:
 ```
 arn:aws:eks:us-east-1:650251710981:cluster/efk-cluster
 
@@ -169,34 +169,27 @@ Verify the health and readiness of your nodes and cluster:
 kubectl get nodes
 ```
 
-Expected output example:
+Expected output:
 
-```
-NAME                             STATUS                        ROLES    AGE     VERSION
-ip-192-168-18-200.ec2.internal   NotReady,SchedulingDisabled   <none>   21m     v1.32.9-eks-113cf36
-ip-192-168-19-74.ec2.internal    Ready                         <none>   3m35s   v1.32.9-eks-113cf36
-ip-192-168-22-93.ec2.internal    Ready                         <none>   11m     v1.32.9-eks-113cf36
-ip-192-168-26-13.ec2.internal    Ready                         <none>   11m     v1.32.9-eks-113cf36
-ip-192-168-38-244.ec2.internal   Ready                         <none>   5m41s   v1.32.9-eks-113cf36
-ip-192-168-44-90.ec2.internal    Ready                         <none>   11m     v1.32.9-eks-113cf36
-
+```bash
+NAME                             STATUS   ROLES    AGE    VERSION
+ip-192-168-48-113.ec2.internal   Ready    <none>   9m4s   v1.32.9-eks-113cf36
+ip-192-168-53-185.ec2.internal   Ready    <none>   9m5s   v1.32.9-eks-113cf36
+ip-192-168-7-202.ec2.internal    Ready    <none>   9m5s   v1.32.9-eks-113cf36
 ```
 
 > ✅ *Your Kubernetes cluster is now up and running on Amazon EKS.*
 
 ---
-### **Step 5: Clean up**
 
-```bash
-eksctl delete cluster --name observability
-```
+
 
 ## Deploy Sample Applications
 In this section, we will deploy a set of sample applications to the Kubernetes cluster.
 These applications will generate logs that will be collected, processed, and visualized by the EFK stack. The applications are in the apps directory. 
 
 
-The following three applications will be deployed:
+The following three applications will be deployed into the cluster:
 
 - Nginx: A lightweight web server used to simulate HTTP traffic and access logs.
 
@@ -204,99 +197,40 @@ The following three applications will be deployed:
 
 - A Django blog application : A simple web-based application that generates application-level logs. 
 
-### Deploy Nginx 
 
----
+### **Step 1: Deploy apps in the cluster**
 
- **Step 1: Navigate to the nginx directory**
-Change  directory to the nginx  folder using this command:
-```bash
-cd /apps/Nginx/
-```
-> 💡 *Ensure that the Nginx deployment and service manifest files are available in this directory before proceeding.*
-
- **Step 2: Deploy the Nginx App**
-Use the `kubectl` command to deploy both the **Deployment** and **Service** resources:
-```bash
-kubectl apply -f nginx-deployment.yaml -n demo-apps
-kubectl apply -f nginx-svc.yaml
-```
-> ✅ *This command creates the Nginx deployment and exposes it as a service within the cluster.*
-
- **Verification**
-
-Check that the Nginx pods and service are running successfully:
+To deploy these applications i write a script that will automate this process. Navigate to the apps directory and run this command
 
 ```bash
-kubectl get pods -l app=nginx -n demo-apps
-kubectl get svc nginx-service  -n demo-apps
+  ../deploy_all_apps.sh
 ```
-> 🔍 *If all resources show the “Running” and “Active” states, the Nginx deployment is complete.*
+This command will create a namespace called demo-apps and  deploy  all the apps in that namespace
 
-### Deploy Redis app 
----
- **Step 1: Navigate to the Redis Directory**
-Change your working directory to the Redis application folder:
+Expected output:
 ```bash
-cd /apps/Redis/
 ```
-> 💡 *Ensure that the Redis deployment and service YAML files are available in this directory before proceeding.*
 
- **Step 2: Deploy Redis to the Cluster**
-Run the following commands to apply the Redis manifests:
+
+### **Step 5: Verify all pods are running in the  Cluster**
+Very that all your pods are running in the cluster
 
 ```bash
-kubectl apply -f redis-deployment.yaml -n demo-apps
-kubectl apply -f redis-svc.yaml  -n demo-apps
+kubectl get pods -n demo-apps
 ```
-> ✅ *This command deploys the Redis application and exposes it within the Kubernetes cluster.*
 
- **Step 3: Verify Redis Deployment**
-Check the status of the Redis resources:
-
+Expected output:
 ```bash
-kubectl get pods -l app=redis -n demo-apps
-kubectl get svc redis-service  -n demo-apps
-```
-> 🔍 *Confirm that the Redis pod is in the “Running” state and the service is active.*
+NAME                              READY   STATUS    RESTARTS   AGE
+blog-app-788df6747c-2k2jm         1/1     Running   0          5m2s
+blog-app-788df6747c-k4mfg         1/1     Running   0          5m2s
+nginx-deployment-96b9d695-422l4   1/1     Running   0          5m19s
+nginx-deployment-96b9d695-bdfpq   1/1     Running   0          5m19s
+redis-0                           1/1     Running   0          5m9s
 
----
-
-
-### Deploy Django blog app
-
-
- **Step 1: Navigate to the Blog Directory**
-Change your working directory to the Blog application folder:
-
-```bash
-cd /apps/Blog/
 ```
 
-> 💡 *Make sure the Blog app deployment and service YAML files exist in this path.*
-
- **Step 2: Deploy the Blog Application**
-Use `kubectl` to create the deployment and service for the Blog app:
-
-```bash
-kubectl apply -f blog-deployment.yaml -n demo-apps
-kubectl apply -f blog-svc.yaml   -n demo-apps
-```
-
-> ✅ *This will deploy the Blog application and expose it as a service inside the cluster.*
-
- **Step 3: Verify Blog Application Deployment**
-Confirm the Blog app is running properly:
-
-```bash
-kubectl get pods -l app=blog -n demo-apps
-kubectl get svc blog-service  -n demo-apps
-```
-
-> 🔍 *Ensure that all Blog pods are in the “Running” state and the service is reachable.*
-
----
-
+> ✅ *Make sure all your  pods are in the running state*
 
 
 ## Set Up the EFK Stack
@@ -309,56 +243,61 @@ In order for the **EKS cluster** to interact with the EBS volume, some initial c
 
 ---
 
-1. **Create an IAM Role for the Service Account**  
+**Step 1: Create an IAM Role for the Service Account**  
    This role will grant the necessary permissions for the EBS CSI driver to manage EBS volumes on behalf of Kubernetes.
 
    ```bash
    eksctl create iamserviceaccount \
    --name ebs-csi-controller-sa \
    --namespace kube-system \
-   --cluster observability \
+   --cluster efk-cluster \
    --role-name AmazonEKS_EBS_CSI_DriverRole \
    --role-only \
    --attach-policy-arn arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy \
    --approve
    ```
    
-2. **Retrieve the IAM Role ARN**  
+**step 2 : Retrieve the IAM Role ARN**  
    You will need the ARN of the IAM role created in the previous step to associate it with your EKS service account.
    ```bash
    ARN=$(aws iam get-role --role-name AmazonEKS_EBS_CSI_DriverRole --query 'Role.Arn' --output text)
    ```
 
-3. **Deploy the EBS CSI Driver**  
+**Step 3: Deploy the EBS CSI Driver**  
    The EBS Container Storage Interface (CSI) driver enables dynamic provisioning and management of EBS volumes for your Kubernetes workloads.
 
 ```bash
-eksctl create addon --cluster observability \
+eksctl create addon --cluster efk-cluster \
 --name aws-ebs-csi-driver --version latest \
 --service-account-role-arn $ARN --force
 ```
 For more details on EBS CSI driver read [Use Kubernetes volume storage with Amazon EBS](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html)
 
-4. **Create a Namespace for Logging**  
+**Step 4: Create a Namespace for Logging**  
    Create a  namespace named `logging` where all EFK components will be deployed.  
-   ```bash
-   kubectl create namespace logging
-   ```
 
+  ```bash
+  kubectl create namespace logging
+  ```
+
+
+To install the EFK stack in our cluster, we will use helm, make sure you have helm installed
 ### Deploy Elasticserach in K8S cluster
 
 ### Deploy Kibana in K8S cluster
 ### Deploy  Fluentbit in the K8S cluster
-1. Add  the Fluent Helm charts repository
 
+**Step 1: Add  the Fluent Helm charts repository**
+
+Use the following command to add the Fluent Helm charts repository
 ```bash
 helm repo add fluent https://fluent.github.io/helm-charts 
 ```
-2. validate that the repo was added
+ validate that the repo was added
 ```bash
 helm search repo fluent
 ```
-3. Install the  default chart 
+ **Step 2: Install the  default chart**
 ```bash
 helm upgrade --install fluent-bit fluent/fluent-bit
 ```
