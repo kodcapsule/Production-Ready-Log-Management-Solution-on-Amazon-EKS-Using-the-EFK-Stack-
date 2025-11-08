@@ -1,4 +1,4 @@
-# Building a production-Ready Centralized and Scalable Log Management Solution on Amazon EKS Using the EFK Stack (Elasticsearch, Fluent Bit, and Kibana)
+#  
 
 
 This is a production-ready project that demostrate how you can build Centralized and Scalable log management solution on **Amazon EKS** using the popular **EFK Stack** — **Elasticsearch**, **Fluent Bit**, and **Kibana**. By implementing this project, you will have practical hands-on experience of how to manage logs in a microservice and cloud-native applications. 
@@ -81,7 +81,7 @@ eksctl create cluster \
 > ⏱️ *Wait patiently as this process may take several minutes, between 15 to 20 minutes.*
 ![EFK CLUSTER](./images/efk-cluster.png)
 ---
-### **🧰 Step 2: Install IAM OIDC Provider**
+### **🧰 Step 2: Install IAM OIDC Provider in th cluster**
 
 Associate an IAM OpenID Connect (OIDC) provider with your EKS cluster to enable service account authentication:
 
@@ -94,7 +94,7 @@ eksctl utils associate-iam-oidc-provider \
 
 expected output
 
-```
+```bash
 2025-10-25 13:25:06 [ℹ]  will create IAM Open ID Connect provider for cluster "efk-cluster" in "us-east-1"
 2025-10-25 13:25:07 [✔]  created IAM Open ID Connect provider for cluster "efk-cluster" in "us-east-1"
 ```
@@ -110,7 +110,7 @@ aws eks describe-cluster \
 
 expected output:
 
-```
+```bash
 https://oidc.eks.us-east-1.amazonaws.com/id/A3048BC2344DF3FCE082A738E4239522
 
 ```
@@ -193,7 +193,8 @@ eksctl delete cluster --name observability
 
 ## Deploy Sample Applications
 In this section, we will deploy a set of sample applications to the Kubernetes cluster.
-These applications will generate logs that will be collected, processed, and visualized by the EFK stack. The applications are in the apps directory
+These applications will generate logs that will be collected, processed, and visualized by the EFK stack. The applications are in the apps directory. 
+
 
 The following three applications will be deployed:
 
@@ -363,5 +364,5 @@ helm upgrade --install fluent-bit fluent/fluent-bit
 ```
 For more details ablout installing Fluent bit in K8S cluster refere to [Download and install Fluent Bit](https://docs.fluentbit.io/manual/installation/downloads/kubernetes#fluent-bit.conf)
 ## Verification
-## Cleanup (Optional)
+## Cleanup 
 ## Conclusion
