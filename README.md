@@ -283,8 +283,39 @@ For more details on EBS CSI driver read [Use Kubernetes volume storage with Amaz
 
 To install the EFK stack in our cluster, we will use helm, make sure you have helm installed
 ### Deploy Elasticserach in K8S cluster
+**Step 1: Add  Elastic charts repository**
+```bash
+helm repo add elastic https://helm.elastic.co
+helm repo update
+```
+
+ **Step 2: Install the   chart**
+
+```bash
+helm install elasticsearch \
+ --set replicas=1 \
+ --set volumeClaimTemplate.storageClassName=gp2 \
+ --set persistence.labels.enabled=true elastic/elasticsearch -n logging
+```
+
+Preferably you can install Elasticesearch using the operator. 
+ **Step 3: Retrieve Elasticsearch Username & Password**
+
+```bash
+ # for username
+kubectl get secrets --namespace=logging elasticsearch-master-credentials -ojsonpath='{.data.username}' | base64 -d
+# for password
+kubectl get secrets --namespace=logging elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
+```
+
+
 
 ### Deploy Kibana in K8S cluster
+Since kibana is part of 
+ **Step 1: Install the   chart**
+ ```bash
+ helm install kibana elastic/kibana      
+ ```
 ### Deploy  Fluentbit in the K8S cluster
 
 **Step 1: Add  the Fluent Helm charts repository**
@@ -304,4 +335,4 @@ helm upgrade --install fluent-bit fluent/fluent-bit
 For more details ablout installing Fluent bit in K8S cluster refere to [Download and install Fluent Bit](https://docs.fluentbit.io/manual/installation/downloads/kubernetes#fluent-bit.conf)
 ## Verification
 ## Cleanup 
-## Conclusion
+## Conclusion 
