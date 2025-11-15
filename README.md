@@ -16,21 +16,18 @@ This is a production-ready project that demostrate how you can build Centralized
       - [Step 4: update-kubeconfig](#update-kubeconfig)
       - [Step 5: Verify cluster connection](#Verify-cluster-connection)
 5. [Deploy Sample Applications](#-deploy-sample-applications)
-     - [Deploy Nginx app](#Deploy-Nginx-app) 
-     - [Deploy Redis app](#Deploy-Redis-app) 
-     - [Deploy Django blog app](#Deploy-Django-blog-app) 
-6. [Set Up the EFK Stack](#step-3-set-up-the-efk-stack) 
+6. [Set Up the EFK Stack](#set-up-the-efk-stack) 
 7. [Verification](#verification)  
 8. [Cleanup (Optional)](#cleanup-optional)  
 9. [Conclusion](#conclusion)
-
+---
 ## Introduction
 In today's modern cloud-native applications, logging is very critical and should not be an afterthought. help Application logs help in troubleshooting and resolving application failure. Unlike smaller applications with lower traffic, for which you can check logs by simply using the `kubectl logs` command to check the logs of a pod straightforwardly, in a microservices architecture, applications usually have hundreds and sometimes thousands of services: using the usual technique to identify and manage logs is practically impossible and inefficient. Then how do we address this challenge?
 
 Well, we need an efficient log management system to quickly locate the information we need when issues arise; EFK Stack to the rescue. When it comes to Kubernetes log management, the EFK stack stands out as a reliable option. EFK, which stands for Elasticsearch, Fluent Bit, and Kibana, simplifies the process of collecting, analysing, and visualising logs. This stack includes a strong set of tools for managing logs across Kubernetes clusters, allowing you to effectively monitor, troubleshoot, and obtain important insights into your applications.
 
 In this project we will dive deep into how to deploy production-ready log management in AWS EKS using the EFK stack. if you are ready, grab a cup of coffee, and let's gather some logs for efficient management and troubleshooting.
-
+---
 
 ## Project Architecture
 ![Project Architecture](./images/CLo.gif)
@@ -40,6 +37,8 @@ The architecture consists of:
 - **Elasticsearch** for log indexing and storage.  
 - **Kibana** for log visualization and querying.  
 - **Sample applications** Three sample applications, Nginx, Redis and Django blog app deployed into the cluster
+
+---
 ## Prerequisites
 
 Before you begin, make sure you have the  following prerequisites met:
@@ -62,7 +61,7 @@ Before you begin, make sure you have the  following prerequisites met:
 6. **Knowledge Requirement** – A basic understanding of containers, Kubernetes, and cloud-native application concepts.  
    👉 [Learn the Basics of Kubernetes](https://kubernetes.io/docs/concepts/)
 
-
+---
 ## Set Up a Kubernetes Cluster
 This section describes how to create and configure a Kubernetes cluster on Amazon EKS using **eksctl**.
 
@@ -80,8 +79,9 @@ eksctl create cluster \
 
 > ⏱️ *Wait patiently as this process may take several minutes, between 15 to 20 minutes.*
 
-![EFK CLUSTER](./images/efk-cluster.png)
 ---
+
+
 ### **🧰 Step 2: Install IAM OIDC Provider in th cluster**
 
 Associate an IAM OpenID Connect (OIDC) provider with your EKS cluster to enable service account authentication:
@@ -232,8 +232,10 @@ redis-0                           1/1     Running   0          5m9s
 
 > ✅ *Make sure all your  pods are in the running state*
 
+---
 
 ## Set Up the EFK Stack
+
 
 ### 🧩 Initial Setup
 
@@ -241,7 +243,7 @@ Elasticsearch is a **stateful application**. To ensure data persistence, you mus
 
 In order for the **EKS cluster** to interact with the EBS volume, some initial configuration is required. Follow the steps below to complete the setup.
 
----
+
 
 **Step 1: Create an IAM Role for the Service Account**  
    This role will grant the necessary permissions for the EBS CSI driver to manage EBS volumes on behalf of Kubernetes.
