@@ -228,12 +228,12 @@ The following three applications will be deployed into the cluster:
 
 ### **Step 1: Deploy apps in the cluster**
 
-To deploy these application, a script  will automate this process, since the focus is on log management app deployment to K8S cluster. Navigate to the `apps` directory and run this command
+To deploy these application, a script  will automate this process, since the focus is on log management. Navigate to the `apps` directory and run this command
 
 ```bash
-  ../deploy_all_apps.sh
+  ./deploy_all_apps.sh
 ```
-This command will create a namespace called demo-apps and  deploy  all the apps in that namespace
+This command will create a namespace called demo-apps and  deploy  all the apps in that namespace. Yo can take a look at the script to better understand it. 
 
 ```bash
 ============================================================
@@ -318,7 +318,7 @@ In order for the **EKS cluster** to interact with the EBS volume, some initial c
    --approve
    ```
    
-
+Expected output:
 ```bash
 2025-11-16 00:24:51 [ℹ]  1 iamserviceaccount (kube-system/ebs-csi-controller-sa) was included (based on the include/exclude rules)
 2025-11-16 00:24:51 [!]  serviceaccounts in Kubernetes will not be created or modified, since the option --role-only is used
@@ -344,6 +344,7 @@ eksctl create addon --cluster efk-cluster \
 --name aws-ebs-csi-driver --version latest \
 --service-account-role-arn $ARN --force
 ```
+Expected CLI output:
 ```bash
 2025-11-16 00:31:55 [ℹ]  Kubernetes version "1.32" in use by cluster "efk-cluster"
 2025-11-16 00:31:56 [ℹ]  IRSA is set for "aws-ebs-csi-driver" addon; will use this to configure IAM permissions
@@ -379,7 +380,7 @@ helm install elasticsearch \
  --set persistence.labels.enabled=true elastic/elasticsearch -n logging
 ```
 
-Expected output:
+Expected CLI output:
 
 ```bash
 NAME: elasticsearch
@@ -408,14 +409,13 @@ kubectl get secrets --namespace=logging elasticsearch-master-credentials -ojsonp
 kubectl get secrets --namespace=logging elasticsearch-master-credentials -ojsonpath='{.data.password}' | base64 -d
 ```
 
-
-
 ### Deploy Kibana in K8S cluster
-Since kibana is part of 
- **Step 1: Install the   chart**
+  **Step 1: Install the   chart**
  ```bash
  helm install kibana --set service.type=LoadBalancer elastic/kibana -n logging     
  ```
+Expected CLI output:
+
  ```bash
  NAME: kibana
 LAST DEPLOYED: Sun Nov 16 00:47:30 2025
@@ -448,7 +448,7 @@ helm search repo fluent
 ```bash
 helm install fluent-bit fluent/fluent-bit -f efk/fluentbit-values.yaml -n logging
 ```
-
+Expected CLI output:
 ```bash
 NAME: fluent-bit
 LAST DEPLOYED: Sun Nov 16 00:59:26 2025
@@ -463,6 +463,9 @@ kubectl --namespace logging port-forward $POD_NAME 2020:2020
 curl http://127.0.0.1:2020
 ```
 For more details ablout installing Fluent bit in K8S cluster refere to [Download and install Fluent Bit](https://docs.fluentbit.io/manual/installation/downloads/kubernetes#fluent-bit.conf)
+
+
+
 ### Verification
 verify that all the EFK stack pods are running 
 ```bash
@@ -492,5 +495,6 @@ Copy the load balancer url to your browser and append the port 5601 to it.
 ```bash
 acbc27c5d340f4065a3b14d34c4d42d6-1178792962.us-east-1.elb.amazonaws.com:5601
 ```
+The kubana login page will appear login with the username and password you got from Elastic search. 
 ## Cleanup 
 ## Conclusion 
