@@ -1,25 +1,24 @@
-#  
+#  Production-Ready EFK Stack Log Management for Amazon EKS - Elasticsearch, Fluent Bit, Kibana
 
 
-This is a production-ready project that demostrate how you can build Centralized and Scalable log management solution on **Amazon EKS** using the popular **EFK Stack** — **Elasticsearch**, **Fluent Bit**, and **Kibana**. By implementing this project, you will have practical hands-on experience of how to manage logs in a microservice and cloud-native applications. 
+This is a production-ready project that demostrate how you can build Centralized and Scalable log management solution on **Amazon EKS** using the popular **EFK Stack** - **Elasticsearch**, 
+- **Fluent Bit** and
+- **Kibana**.
+ By implementing this project, you will have practical hands-on experience of how to manage logs in a microservice and cloud-native applications. 
 
+---
 
 ## **Table of Contents**
 
 1. [Introduction](#introduction)  
 2. [Project Architecture](#project-architecture)  
 3. [Prerequisites](#prerequisites)  
-4. [Set Up a Kubernetes Cluster](#Set-Up-a-Kubernetes-Cluster])  
-      - [Step 1: Create an EKS cluster using eksctl](#Create-an-EKS-cluster-using-eksctl) 
-      - [Step 2: install iam-oidc-provider](#install-iam-oidc-provider) 
-      - [Step 3: create nodegroup](#create-nodegroup)
-      - [Step 4: update-kubeconfig](#update-kubeconfig)
-      - [Step 5: Verify cluster connection](#Verify-cluster-connection)
+4. [Set Up a Kubernetes Cluster](#Set-Up-a-Kubernetes-Cluster])    
 5. [Deploy Sample Applications](#-deploy-sample-applications)
-6. [Set Up the EFK Stack](#set-up-the-efk-stack) 
-7. [Verification](#verification)  
-8. [Cleanup (Optional)](#cleanup-optional)  
-9. [Conclusion](#conclusion)
+6. [Set Up the EFK Stack](#set-up-the-efk-stack)  
+7. [Cleanup (Optional)](#cleanup-optional)  
+8. [Conclusion](#conclusion)
+
 ---
 ## Introduction
 In today's modern cloud-native applications, logging is very critical and should not be an afterthought. help Application logs help in troubleshooting and resolving application failure. Unlike smaller applications with lower traffic, for which you can check logs by simply using the `kubectl logs` command to check the logs of a pod straightforwardly, in a microservices architecture, applications usually have hundreds and sometimes thousands of services: using the usual technique to identify and manage logs is practically impossible and inefficient. Then how do we address this challenge?
@@ -61,8 +60,9 @@ Before you begin, make sure you have the  following prerequisites met:
 
 6. **Knowledge Requirement** – A basic understanding of containers, Kubernetes, and cloud-native application concepts.  
    👉 [Learn the Basics of Kubernetes](https://kubernetes.io/docs/concepts/)
-
 ---
+
+
 ## Set Up a Kubernetes Cluster
 This section describes how to create and configure a Kubernetes cluster on Amazon EKS using **eksctl**. `eksctl` is a command-line utility tool that automates and simplifies the process of creating, managing, and operating Amazon Elastic Kubernetes Service (Amazon EKS) clusters. 
 If you want to learn more about the **ekctl** utility visit the official docs [What is Eksctl?](https://docs.aws.amazon.com/eks/latest/eksctl/what-is-eksctl.html)
@@ -211,8 +211,6 @@ ip-192-168-7-202.ec2.internal    Ready    <none>   9m5s   v1.32.9-eks-113cf36
 
 ---
 
-
-
 ## Deploy Sample Applications
 In this section, we will deploy a set of sample applications to the Kubernetes cluster.
 These applications will generate logs that will be collected, processed, and visualized by the EFK stack. The applications are in the `apps` directory. 
@@ -267,10 +265,6 @@ nginx-deployment   2/2     2            2           26s   nginx        nginx:lat
 [SUCCESS] All applications deployed successfully to 'demo-apps' namespace!
 
 ```
-
-
-
-
 ### **Step 2: Verify all pods are running in the  Cluster**
 Very that all your pods are running in the cluster
 
@@ -501,8 +495,6 @@ Once logged in, create a new data view in Kibana and explore the logs collected 
 
 
 ## Cleanup 
-
-
  **Step 1: uninstall the  helm charts**
 
 ```bash
@@ -519,9 +511,10 @@ helm uninstall kibana -n logging
 ```bash
 eksctl delete cluster --name efk-cluster
 ```
+---
 ## Conclusion 
 In this project, we have successfully installed the EFK stack in our Kubernetes cluster, which includes 
 - Elasticsearch for storing logs
 - Fluentbit for collecting and forwarding logs
 - Kibana for visualizing logs.
-   
+The EFK stack is one of the most commond stack that is used for log management ,by implementing this project, you  have gained practical hands-on experience of how to manage logs in a microservice and cloud-native applications.
