@@ -491,10 +491,37 @@ elasticsearch-master-headless   ClusterIP      None             <none>          
 fluent-bit                      ClusterIP      10.100.236.186   <none>                                                                    2020/TCP            6m1s
 kibana-kibana                   LoadBalancer   10.100.110.193   acbc27c5d340f4065a3b14d34c4d42d6-1178792962.us-east-1.elb.amazonaws.com   5601:32444/TCP      17m
 ```
-Copy the load balancer url to your browser and append the port 5601 to it. 
-```bash
+ To verify the setup, access the Kibana dashboard by entering the `LoadBalancer DNS name followed by :5601 in your browser.
+        http://LOAD_BALANCER_DNS_NAME:5601
+  ```bash
 acbc27c5d340f4065a3b14d34c4d42d6-1178792962.us-east-1.elb.amazonaws.com:5601
 ```
-The kubana login page will appear login with the username and password you got from Elastic search. 
+The kubana login page will appear login with the username and password you got from Elasticsearch. 
+Once logged in, create a new data view in Kibana and explore the logs collected from your Kubernetes cluster.
+
+
 ## Cleanup 
+
+
+ **Step 1: uninstall the  helm charts**
+
+```bash
+
+helm uninstall fluent-bit -n logging
+
+helm uninstall elasticsearch -n logging
+
+helm uninstall kibana -n logging
+
+```
+**Step 2: Delete the cluster**
+
+```bash
+eksctl delete cluster --name efk-cluster
+```
 ## Conclusion 
+In this project, we have successfully installed the EFK stack in our Kubernetes cluster, which includes 
+- Elasticsearch for storing logs
+- Fluentbit for collecting and forwarding logs
+- Kibana for visualizing logs.
+   
