@@ -1,7 +1,7 @@
 #  Production-Ready EFK Stack Log Management for Amazon EKS - Elasticsearch, Fluent Bit, Kibana
 
 
-This is a production-ready project that demostrate how you can build Centralized and Scalable log management solution on **Amazon EKS** using the popular **EFK Stack** - **Elasticsearch**, 
+This is a production-ready project that demostrate how you can build Centralized and Scalable log management solution on **Amazon EKS** using the popular **EFK Stack** .- **Elasticsearch**, 
 - **Fluent Bit** and
 - **Kibana**.
  By implementing this project, you will have practical hands-on experience of how to manage logs in a microservice and cloud-native applications. 
@@ -13,52 +13,52 @@ This is a production-ready project that demostrate how you can build Centralized
 1. [Introduction](#introduction)  
 2. [Project Architecture](#project-architecture)  
 3. [Prerequisites](#prerequisites)  
-4. [Set Up a Kubernetes Cluster](#Set-Up-a-Kubernetes-Cluster])    
-5. [Deploy Sample Applications](#-deploy-sample-applications)
+4. [Set Up a Kubernetes Cluster](#set-up-a-kubernetes-cluster])    
+5. [Deploy Sample Applications](#deploy-sample-applications)
 6. [Set Up the EFK Stack](#set-up-the-efk-stack)  
-7. [Cleanup (Optional)](#cleanup-optional)  
+7. [Cleanup ](#cleanup)  
 8. [Conclusion](#conclusion)
 
 ---
 ## Introduction
-In today's modern cloud-native applications, logging is very critical and should not be an afterthought. help Application logs help in troubleshooting and resolving application failure. Unlike smaller applications with lower traffic, for which you can check logs by simply using the `kubectl logs` command to check the logs of a pod straightforwardly, in a microservices architecture, applications usually have hundreds and sometimes thousands of services: using the usual technique to identify and manage logs is practically impossible and inefficient. Then how do we address this challenge?
+In today's modern cloud-native applications, logging is very critical and should not be an afterthought. Infrastructure and  application logs play a vital role  in troubleshooting and resolving  failures when they occure. In a microservices architecture, applications usually have hundreds and sometimes thousands of services: using the usual technique to identify and manage logs is practically impossible and inefficient. Then how do we address this challenge?
 
-Well, we need an efficient log management system to quickly locate the information we need when issues arise; EFK Stack to the rescue. When it comes to Kubernetes log management, the EFK stack stands out as a reliable option. EFK, which stands for Elasticsearch, Fluent Bit, and Kibana, simplifies the process of collecting, analysing, and visualising logs. This stack includes a strong set of tools for managing logs across Kubernetes clusters, allowing you to effectively monitor, troubleshoot, and obtain important insights into your applications.
+Well, we need an efficient way to collect, store, analyze and visualize  these logs; EFK Stack to the rescue. The EFK stack (Elasticsearch, Fluent Bit, and Kibana) makes the process of   collecting, analysing, and visualising logs very easy.
 
-In this project we will dive deep into how to deploy production-ready log management in AWS EKS using the EFK stack. if you are ready, grab a cup of coffee, and let's gather some logs for efficient management and troubleshooting.
+
+In this project,  we will  deploy a production-ready log management,EFK into an  EKS cluster. if you are ready, grab a cup of coffee, and let's gather some logs for efficient management and troubleshooting.
 
 ---
 
 ## Project Architecture
-![Project Architecture](./images/CLo.gif)
+![Project Architecture](./images/archi.gif)
 The architecture consists of:  
 - **Amazon EKS Cluster** hosting containerized applications.  
 - **Fluent Bit** as a lightweight log collector and forwarder.  
 - **Elasticsearch** for log indexing and storage.  
 - **Kibana** for log visualization and querying.  
 - **Sample applications** Three sample applications, Nginx, Redis and Django blog app deployed into the cluster
+- **AWS EBS Volume** to permantly store logs
 
 ---
 ## Prerequisites
 
-Before you begin, make sure you have the  following prerequisites met:
+1. **AWS Account**: An  AWS account with the permissions to create and manage AWS resources (EKS,EC2 and EBS volumes).
+   👉 [You can create an AWS Account](https://aws.amazon.com/resources/create-account/)
 
-1. **AWS Account** – You should  have an active AWS account with sufficient permissions to create and manage AWS resources (EKS,EC2 and EBS).  
-   👉 [Create an AWS Account](https://aws.amazon.com/resources/create-account/)
+2. **AWS CLI**: AWS CLI Installed and configured  with your AWS credentials.  
+   👉 [Install AWS CLI here](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
-2. **AWS CLI** – Installed and configured  with your AWS credentials.  
-   👉 [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-
-3. **kubectl** – Installed and configured to manage your Kubernetes cluster.  
+3. **kubectl**:Installed and configured `kubectl`.  
    👉 [Install kubectl](https://kubernetes.io/docs/tasks/tools/)
 
-4. **Helm** – Installed for managing Kubernetes packages and deploying Helm charts.  
+4. **Helm**: Installed for managing Kubernetes packages and deploying Helm charts.  
    👉 [Install Helm](https://helm.sh/docs/intro/install/)
 
-5. **eksctl** – Installed for creating and managing Amazon EKS clusters.  
+5. **eksctl**: for creating and managing  EKS clusters.  
    👉 [Install eksctl](https://eksctl.io/installation/)
 
-6. **Knowledge Requirement** – A basic understanding of containers, Kubernetes, and cloud-native application concepts.  
+6. **Knowledge Requirement**: Some basic understanding of containers and Kubernetes, 
    👉 [Learn the Basics of Kubernetes](https://kubernetes.io/docs/concepts/)
 ---
 
@@ -84,7 +84,7 @@ eksctl create cluster \
 
 If you have done everything correctly you should get the ouput below indicating that the cluster has been created successfully. I have trancated the output for readerbility.
 
-Expected output.  
+Expected output: 
 
 ```bash
 2025-11-15 23:42:34 [ℹ]  creating addon: vpc-cni
